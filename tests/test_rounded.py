@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
-from matplotlib.path import Path
 import numpy as np
 import pytest
+from matplotlib.path import Path
 
-import teal_minimal as tm
+from plotform import rounded as rf
 
 
 def assert_vertex(path, point, tolerance=1e-7):
@@ -13,7 +13,7 @@ def assert_vertex(path, point, tolerance=1e-7):
 
 
 def test_squircle_bounds_and_closure():
-    path = tm.squircle_path(1, 2, 4, 6)
+    path = rf.squircle_path(1, 2, 4, 6)
     vertices = path.vertices
     assert np.allclose(vertices[0], vertices[-1])
     assert vertices[:, 0].min() == pytest.approx(1)
@@ -23,7 +23,7 @@ def test_squircle_bounds_and_closure():
 
 
 def test_horizontal_capsule_has_exact_straights_and_semicircle_endpoints():
-    path = tm.capsule_path(0, 0, 8, 2)
+    path = rf.capsule_path(0, 0, 8, 2)
     # Radius 1; right cap center (7, 1), left cap center (1, 1).
     for point in ((1, 2), (7, 2), (8, 1), (7, 0), (1, 0), (0, 1)):
         assert_vertex(path, point)
@@ -37,7 +37,7 @@ def test_horizontal_capsule_has_exact_straights_and_semicircle_endpoints():
 
 
 def test_vertical_capsule_has_exact_semicircle_endpoints():
-    path = tm.capsule_path(0, 0, 2, 8)
+    path = rf.capsule_path(0, 0, 2, 8)
     for point in ((0, 7), (1, 8), (2, 7), (2, 1), (1, 0), (0, 1)):
         assert_vertex(path, point)
     assert np.isclose(path.vertices[:, 0].min(), 0)
@@ -47,7 +47,7 @@ def test_vertical_capsule_has_exact_semicircle_endpoints():
 
 
 def test_square_capsule_is_a_circle():
-    path = tm.capsule_path(0, 0, 2, 2)
+    path = rf.capsule_path(0, 0, 2, 2)
     extent = np.ptp(path.vertices, axis=0)
     assert np.allclose(extent, (2, 2))
     assert_vertex(path, (0, 1))
@@ -58,15 +58,15 @@ def test_square_capsule_is_a_circle():
 
 def test_invalid_shapes():
     with pytest.raises(ValueError):
-        tm.squircle_path(0, 0, 1, 1, exponent=1)
+        rf.squircle_path(0, 0, 1, 1, exponent=1)
     with pytest.raises(ValueError):
-        tm.capsule_path(0, 0, -1, 1)
+        rf.capsule_path(0, 0, -1, 1)
 
 
 def test_pills_have_consistent_height_and_single_character_circles():
     fig, ax = plt.subplots()
-    single = tm.add_pill(ax, 0.25, 0.5, "A", transform=ax.transAxes)
-    longer = tm.add_pill(ax, 0.65, 0.5, "Long label", transform=ax.transAxes)
+    single = rf.add_pill(ax, 0.25, 0.5, "A", transform=ax.transAxes)
+    longer = rf.add_pill(ax, 0.65, 0.5, "Long label", transform=ax.transAxes)
     fig.canvas.draw()
     single_extents = np.ptp(single.get_bbox_patch().get_path().vertices, axis=0)
     longer_extents = np.ptp(longer.get_bbox_patch().get_path().vertices, axis=0)
@@ -78,7 +78,7 @@ def test_pills_have_consistent_height_and_single_character_circles():
 
 def test_positive_and_negative_rounded_bars():
     fig, ax = plt.subplots()
-    container = tm.rounded_bar(ax, [0, 1, 2], [3, -2, 0], radius=0.2, label="Values")
+    container = rf.rounded_bar(ax, [0, 1, 2], [3, -2, 0], radius=0.2, label="Values")
     assert len(container.patches) == 3
     assert container.get_label() == "Values"
     assert ax.dataLim.y0 <= -2
@@ -93,7 +93,7 @@ def test_positive_and_negative_rounded_bars():
 def test_full_cap_has_exact_display_radius_and_join_endpoints(figsize):
     fig, ax = plt.subplots(figsize=figsize, dpi=100)
     width = 0.2
-    container = tm.rounded_bar(ax, [0, 1, 2, 3], [3, 3, 3, 3], width=width, radius="full")
+    container = rf.rounded_bar(ax, [0, 1, 2, 3], [3, 3, 3, 3], width=width, radius="full")
     fig.canvas.draw()
     path = container.patches[0].get_path()
     x0, _ = ax.transData.transform((-width / 2, 0))
@@ -113,7 +113,9 @@ def test_full_cap_has_exact_display_radius_and_join_endpoints(figsize):
 def test_both_ends_make_an_exact_vertical_capsule():
     fig, ax = plt.subplots(dpi=100)
     width = 0.2
-    container = tm.rounded_bar(ax, [0, 1, 2, 3], [3, 3, 3, 3], width=width, radius="full", ends="both")
+    container = rf.rounded_bar(
+        ax, [0, 1, 2, 3], [3, 3, 3, 3], width=width, radius="full", ends="both"
+    )
     fig.canvas.draw()
     path = container.patches[0].get_path()
     x0, _ = ax.transData.transform((-width / 2, 0))
@@ -134,8 +136,8 @@ def test_both_ends_make_an_exact_vertical_capsule():
 
 def test_horizontal_and_negative_full_bars_render():
     fig, (ax1, ax2) = plt.subplots(1, 2)
-    vertical = tm.rounded_bar(ax1, [0, 1], [-2, -4], radius="full", ends="both")
-    horizontal = tm.rounded_barh(ax2, [0, 1], [4, -2], radius="full")
+    vertical = rf.rounded_bar(ax1, [0, 1], [-2, -4], radius="full", ends="both")
+    horizontal = rf.rounded_barh(ax2, [0, 1], [4, -2], radius="full")
     assert ax1.dataLim.y0 <= -4
     assert ax2.dataLim.x0 <= -2
     assert ax2.dataLim.x1 >= 4
@@ -147,14 +149,14 @@ def test_horizontal_and_negative_full_bars_render():
 
 def test_short_full_bar_fails_clearly_but_fit_and_zero_radius_render():
     fig, ax = plt.subplots()
-    tm.rounded_bar(ax, [0], [0.01], radius="full", ends="both")
+    rf.rounded_bar(ax, [0], [0.01], radius="full", ends="both")
     with pytest.raises(ValueError, match="exact full capsule"):
         fig.canvas.draw()
     plt.close(fig)
 
     fig, ax = plt.subplots()
-    short = tm.rounded_bar(ax, [0], [0.01], radius="fit", ends="both")
-    square = tm.rounded_bar(ax, [1], [2], radius=0)
+    short = rf.rounded_bar(ax, [0], [0.01], radius="fit", ends="both")
+    square = rf.rounded_bar(ax, [1], [2], radius=0)
     fig.canvas.draw()
     assert np.isfinite(short.patches[0].get_path().vertices).all()
     assert square.patches[0].get_path().vertices.shape[0] == 5
@@ -163,7 +165,7 @@ def test_short_full_bar_fails_clearly_but_fit_and_zero_radius_render():
 
 def test_empty_rounded_bars():
     fig, ax = plt.subplots()
-    container = tm.rounded_bar(ax, [], [])
+    container = rf.rounded_bar(ax, [], [])
     assert container.patches == []
     fig.canvas.draw()
     plt.close(fig)
@@ -173,5 +175,5 @@ def test_empty_rounded_bars():
 def test_invalid_bar_options(options):
     fig, ax = plt.subplots()
     with pytest.raises(ValueError):
-        tm.rounded_bar(ax, [0], [1], **options)
+        rf.rounded_bar(ax, [0], [1], **options)
     plt.close(fig)

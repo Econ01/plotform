@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from matplotlib.path import Path
 from matplotlib.patches import PathPatch
+from matplotlib.path import Path
 from matplotlib.transforms import IdentityTransform
 
 from .palette import INK

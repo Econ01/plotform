@@ -23,7 +23,7 @@ BASE_COLORS = (
     PRIMARY,
     "#E69F00",  # amber
     "#0072B2",  # blue
-    CORAL,      # vermillion/coral
+    CORAL,  # vermillion/coral
     "#6A51A3",  # purple
     "#4C9A2A",  # green
     "#CC79A7",  # rose
@@ -32,9 +32,9 @@ BASE_COLORS = (
 
 # Brand teal map retained for optional use. SCALAR_CMAP is the default for
 # continuous data because every stop remains visible against white.
-SEQUENTIAL_CMAP = "teal_minimal_seq"
-DIVERGING_CMAP = "teal_minimal_div"
-SCALAR_CMAP = "teal_minimal_scalar"
+SEQUENTIAL_CMAP = "plotform_seq"
+DIVERGING_CMAP = "plotform_div"
+SCALAR_CMAP = "plotform_scalar"
 SCALAR_STOPS = ("#17324D", "#0072B2", PRIMARY, "#4C9A2A", "#C47F00")
 
 
@@ -72,13 +72,17 @@ def get_palette(n_colors: int = len(BASE_COLORS)) -> list[str]:
         candidate = to_hex(rgb).upper()
         while candidate in colors:
             hue = (hue + 0.037) % 1.0
-            candidate = to_hex(colorsys.hls_to_rgb(hue, lightness[i % 4], saturation[i % 3])).upper()
+            candidate = to_hex(
+                colorsys.hls_to_rgb(hue, lightness[i % 4], saturation[i % 3])
+            ).upper()
         colors.append(candidate)
 
     return colors
 
 
-def build_colormaps() -> tuple[LinearSegmentedColormap, LinearSegmentedColormap, LinearSegmentedColormap]:
+def build_colormaps() -> tuple[
+    LinearSegmentedColormap, LinearSegmentedColormap, LinearSegmentedColormap
+]:
     """Build fresh brand-sequential, diverging, and full-range scalar maps."""
     sequential = LinearSegmentedColormap.from_list(
         SEQUENTIAL_CMAP,

@@ -18,9 +18,7 @@ def _relative_luminance(color) -> float:
 
 
 def _contrast_ratio(first, second) -> float:
-    light, dark = sorted(
-        (_relative_luminance(first), _relative_luminance(second)), reverse=True
-    )
+    light, dark = sorted((_relative_luminance(first), _relative_luminance(second)), reverse=True)
     return (light + 0.05) / (dark + 0.05)
 
 
@@ -154,12 +152,14 @@ def pill_legend(
         "frameon": False,
     }
     if outside:
-        options.update({
-            "loc": "lower left",
-            "bbox_to_anchor": (0.0, 1.02),
-            "borderaxespad": 0.0,
-            "ncols": max(1, len(labels)),
-        })
+        options.update(
+            {
+                "loc": "lower left",
+                "bbox_to_anchor": (0.0, 1.02),
+                "borderaxespad": 0.0,
+                "ncols": max(1, len(labels)),
+            }
+        )
     options.update(kwargs)
     legend = ax.legend(handles, labels, **options)
 
@@ -169,7 +169,7 @@ def pill_legend(
             handle.set_visible(False)
 
     background = ax.get_facecolor()
-    for text, label, color in zip(legend.get_texts(), labels, colors):
+    for text, label, color in zip(legend.get_texts(), labels, colors, strict=True):
         style = styles.get(label, "solid")
         if style == "soft":
             facecolor = to_rgba(color, alpha)
@@ -178,11 +178,13 @@ def pill_legend(
             facecolor = to_rgba(color, 1.0)
             textcolor = _solid_text_color(color, target_contrast)
         text.set_color(textcolor)
-        text.set_bbox({
-            "boxstyle": CapsuleBox(pad=pad, height=pill_height),
-            "facecolor": facecolor,
-            "edgecolor": "none",
-        })
+        text.set_bbox(
+            {
+                "boxstyle": CapsuleBox(pad=pad, height=pill_height),
+                "facecolor": facecolor,
+                "edgecolor": "none",
+            }
+        )
 
     if backdrop:
         legend.set_frame_on(True)

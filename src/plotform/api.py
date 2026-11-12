@@ -1,8 +1,6 @@
-"""Native-style convenience names for Teal Minimal helpers."""
+"""Native-style convenience names for Plotform helpers."""
 
 from __future__ import annotations
-
-from matplotlib import pyplot as plt
 
 from .colorbar_utils import capsule_colorbar
 from .legend_utils import pill_legend
@@ -10,7 +8,11 @@ from .rounded import add_pill, rounded_bar, rounded_barh
 
 
 def _axes(ax=None):
-    return plt.gca() if ax is None else ax
+    if ax is not None:
+        return ax
+    from matplotlib import pyplot as plt
+
+    return plt.gca()
 
 
 def legend(ax=None, **kwargs):
@@ -30,7 +32,10 @@ def barh(*args, ax=None, **kwargs):
 
 def colorbar(mappable, *, fig=None, ax=None, **kwargs):
     """Create a capsule colorbar, using the current figure/axes by default."""
-    fig = plt.gcf() if fig is None else fig
+    if fig is None:
+        from matplotlib import pyplot as plt
+
+        fig = plt.gcf()
     return capsule_colorbar(fig, _axes(ax), mappable, **kwargs)
 
 

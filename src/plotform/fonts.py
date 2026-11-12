@@ -6,10 +6,10 @@ from pathlib import Path
 
 from matplotlib import font_manager
 
-SANS_FONT = "Teal Minimal Sans"
-MONO_FONT = "Teal Minimal Mono"
+SANS_FONT = "Plotform Sans"
+MONO_FONT = "Plotform Mono"
 FONT_DIR = Path(__file__).resolve().parent / "assets" / "fonts"
-FONT_FILES = ("TealMinimalSans-Rounded.ttf", "TealMinimalMono-Regular.ttf")
+FONT_FILES = ("PlotformSans-Rounded.ttf", "PlotformMono-Regular.ttf")
 
 _registered = False
 
@@ -33,9 +33,7 @@ def register_fonts(*, verify: bool = True) -> dict[str, Path]:
     paths = font_paths()
     missing = [str(path) for path in paths.values() if not path.is_file()]
     if missing:
-        raise FileNotFoundError(
-            "Bundled theme fonts are missing: " + ", ".join(missing)
-        )
+        raise FileNotFoundError("Bundled theme fonts are missing: " + ", ".join(missing))
 
     if not _registered:
         for path in paths.values():
@@ -46,9 +44,7 @@ def register_fonts(*, verify: bool = True) -> dict[str, Path]:
         resolved: dict[str, Path] = {}
         for family in (SANS_FONT, MONO_FONT):
             properties = font_manager.FontProperties(family=family)
-            found = Path(
-                font_manager.findfont(properties, fallback_to_default=False)
-            ).resolve()
+            found = Path(font_manager.findfont(properties, fallback_to_default=False)).resolve()
             expected = paths[family].resolve()
             if found != expected:
                 raise RuntimeError(

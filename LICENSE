@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Teal Minimal contributors
+Copyright (c) 2026 Econ01
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,4 +21,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 Bundled font software is licensed separately under the SIL Open Font License.
-See src/teal_minimal/assets/fonts/ for the font licenses and attributions.
+See src/plotform/assets/fonts/ for the font licenses and attributions.

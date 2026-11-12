@@ -1,9 +1,9 @@
-"""Teal Minimal: a portable, minimalist Matplotlib theme."""
+"""Plotform: a minimalist Matplotlib theme and plotting toolkit."""
+
+from importlib.metadata import version as _distribution_version
 
 from .api import annotate, bar, barh, colorbar, legend
-from .colorbar_utils import capsule_colorbar
-from .fonts import MONO_FONT, SANS_FONT, font_paths, register_fonts
-from .legend_utils import pill_legend
+from .fonts import MONO_FONT, SANS_FONT
 from .palette import (
     AXIS,
     BASE_COLORS,
@@ -20,21 +20,10 @@ from .palette import (
     WHITE,
     get_palette,
 )
-from .rounded import (
-    CapsuleBox,
-    RoundedBarPatch,
-    SquircleBox,
-    add_pill,
-    add_squircle,
-    capsule_path,
-    rounded_bar,
-    rounded_barh,
-    squircle_path,
-)
 from .theme import apply_theme, theme
 from .three_d import style_3d
 
-__version__ = "0.5.0"
+__version__ = _distribution_version("plotform")
 
 __all__ = [
     "AXIS",
@@ -52,26 +41,13 @@ __all__ = [
     "SCALAR_STOPS",
     "SEQUENTIAL_CMAP",
     "WHITE",
-    "CapsuleBox",
-    "RoundedBarPatch",
-    "SquircleBox",
-    "add_pill",
-    "add_squircle",
     "annotate",
     "apply_theme",
     "bar",
     "barh",
-    "capsule_colorbar",
-    "capsule_path",
     "colorbar",
-    "font_paths",
     "get_palette",
     "legend",
-    "pill_legend",
-    "register_fonts",
-    "rounded_bar",
-    "rounded_barh",
-    "squircle_path",
     "style_3d",
     "theme",
 ]
