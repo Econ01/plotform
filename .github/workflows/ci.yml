@@ -22,8 +22,8 @@ jobs:
           - python: "3.13"
             packages: "matplotlib==3.11.*"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
           cache: pip
@@ -40,8 +40,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -56,7 +56,7 @@ jobs:
           python -m pip install --force-reinstall dist/plotform-0.1.0-py3-none-any.whl
           python -c "import plotform; assert plotform.__version__ == '0.1.0'; plotform.apply_theme()"
       - name: Upload distributions
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: plotform-distributions
           path: dist/*
