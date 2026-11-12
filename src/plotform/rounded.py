@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 from matplotlib.container import BarContainer
-from matplotlib.path import Path
 from matplotlib.patches import PathPatch
+from matplotlib.path import Path
 from matplotlib.transforms import IdentityTransform
 
 from .palette import PRIMARY, WHITE
@@ -258,9 +258,7 @@ def _data_rectangle(center, length, thickness, baseline, orientation):
     t0 = center - thickness / 2
     t1 = center + thickness / 2
     end = baseline + length
-    vertices = np.array([
-        (t0, baseline), (t0, end), (t1, end), (t1, baseline), (t0, baseline)
-    ])
+    vertices = np.array([(t0, baseline), (t0, end), (t1, end), (t1, baseline), (t0, baseline)])
     if orientation == "horizontal":
         vertices = vertices[:, ::-1]
     return Path(vertices, [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY])
@@ -300,21 +298,25 @@ class RoundedBarPatch(PathPatch):
             return self.data_path
 
         if self.orientation == "vertical":
-            corners = np.array([
-                (self.center - self.thickness / 2, self.baseline),
-                (self.center + self.thickness / 2, self.baseline),
-                (self.center, self.baseline + self.length),
-                (self.center, self.baseline),
-                (self.center + 1, self.baseline),
-            ])
+            corners = np.array(
+                [
+                    (self.center - self.thickness / 2, self.baseline),
+                    (self.center + self.thickness / 2, self.baseline),
+                    (self.center, self.baseline + self.length),
+                    (self.center, self.baseline),
+                    (self.center + 1, self.baseline),
+                ]
+            )
         else:
-            corners = np.array([
-                (self.baseline, self.center - self.thickness / 2),
-                (self.baseline, self.center + self.thickness / 2),
-                (self.baseline + self.length, self.center),
-                (self.baseline, self.center),
-                (self.baseline, self.center + 1),
-            ])
+            corners = np.array(
+                [
+                    (self.baseline, self.center - self.thickness / 2),
+                    (self.baseline, self.center + self.thickness / 2),
+                    (self.baseline + self.length, self.center),
+                    (self.baseline, self.center),
+                    (self.baseline, self.center + 1),
+                ]
+            )
         pixels = ax.transData.transform(corners)
         if not np.isfinite(pixels).all():
             return self.data_path
@@ -332,13 +334,21 @@ class RoundedBarPatch(PathPatch):
         length = abs(end - baseline)
         if length <= 1e-9 or thickness <= 1e-9:
             path = _rectangle_path(t0, t1, baseline, end)
-            return Path(path.vertices[:, ::-1], path.codes) if self.orientation == "horizontal" else path
+            return (
+                Path(path.vertices[:, ::-1], path.codes)
+                if self.orientation == "horizontal"
+                else path
+            )
 
         length_limit = length if self.ends == "free" else length / 2
         full_radius = thickness / 2
         if self.radius in {"full", "fit"}:
             if self.radius == "full" and self.strict_full and full_radius > length_limit + 1e-6:
-                requirement = "bar length >= bar thickness" if self.ends == "both" else "bar length >= half the bar thickness"
+                requirement = (
+                    "bar length >= bar thickness"
+                    if self.ends == "both"
+                    else "bar length >= half the bar thickness"
+                )
                 raise ValueError(
                     f"An exact full capsule requires {requirement} in display units; "
                     "use radius='fit' to clamp short bars instead."
@@ -402,7 +412,7 @@ def _rounded_bars(
 
     patches = []
     for position, length, base, wide in zip(
-        positions.ravel(), lengths.ravel(), baseline.ravel(), thickness.ravel()
+        positions.ravel(), lengths.ravel(), baseline.ravel(), thickness.ravel(), strict=True
     ):
         patch = RoundedBarPatch(
             position,
@@ -453,8 +463,17 @@ def rounded_bar(
     circular rounded corners. ``ends='both'`` also rounds the baseline.
     """
     return _rounded_bars(
-        ax, x, height, thickness=width, baseline=bottom, radius=radius,
-        ends=ends, orientation="vertical", color=color, label=label, **kwargs
+        ax,
+        x,
+        height,
+        thickness=width,
+        baseline=bottom,
+        radius=radius,
+        ends=ends,
+        orientation="vertical",
+        color=color,
+        label=label,
+        **kwargs,
     )
 
 
@@ -473,8 +492,17 @@ def rounded_barh(
 ):
     """Draw horizontal bars with the same options as ``rounded_bar``."""
     return _rounded_bars(
-        ax, y, width, thickness=height, baseline=left, radius=radius,
-        ends=ends, orientation="horizontal", color=color, label=label, **kwargs
+        ax,
+        y,
+        width,
+        thickness=height,
+        baseline=left,
+        radius=radius,
+        ends=ends,
+        orientation="horizontal",
+        color=color,
+        label=label,
+        **kwargs,
     )
 
 

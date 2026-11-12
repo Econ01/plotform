@@ -1,11 +1,11 @@
 """Compare rendered capsule silhouettes with analytic stadium masks."""
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import PathPatch
 import numpy as np
 import pytest
+from matplotlib.patches import PathPatch
 
-import teal_minimal as tm
+from plotform import rounded as rf
 
 
 def _render_and_reference(orientation):
@@ -22,7 +22,7 @@ def _render_and_reference(orientation):
     ax = fig.add_axes((0, 0, 1, 1))
     ax.set(xlim=(0, limits[0]), ylim=(0, limits[1]))
     ax.axis("off")
-    ax.add_patch(PathPatch(tm.capsule_path(*bounds), facecolor="black", edgecolor="none"))
+    ax.add_patch(PathPatch(rf.capsule_path(*bounds), facecolor="black", edgecolor="none"))
     fig.canvas.draw()
 
     rgb = np.asarray(fig.canvas.buffer_rgba())[:, :, :3]
@@ -31,9 +31,7 @@ def _render_and_reference(orientation):
     pixel_x = np.arange(width) + 0.5
     pixel_y = height - (np.arange(height) + 0.5)
     xx, yy = np.meshgrid(pixel_x, pixel_y)
-    data = ax.transData.inverted().transform(
-        np.column_stack((xx.ravel(), yy.ravel()))
-    )
+    data = ax.transData.inverted().transform(np.column_stack((xx.ravel(), yy.ravel())))
     x = data[:, 0].reshape(height, width)
     y = data[:, 1].reshape(height, width)
 

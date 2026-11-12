@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: "3.10"
+            packages: "matplotlib==3.8.* numpy==1.24.*"
+          - python: "3.12"
+            packages: "matplotlib==3.11.*"
+          - python: "3.13"
+            packages: "matplotlib==3.11.*"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install package and development dependencies
+        run: python -m pip install -e ".[dev]" ${{ matrix.packages }}
+      - name: Lint
+        run: ruff check .
+      - name: Check formatting
+        run: ruff format --check .
+      - name: Test
+        run: pytest
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install build and test dependencies
+        run: python -m pip install -e ".[dev]"
+      - name: Build distributions
+        run: python -m build
+      - name: Verify source distribution
+        run: python tools/check_sdist.py
+      - name: Install and smoke-test wheel
+        run: |
+          python -m pip install --force-reinstall dist/plotform-0.1.0-py3-none-any.whl
+          python -c "import plotform; assert plotform.__version__ == '0.1.0'; plotform.apply_theme()"
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: plotform-distributions
+          path: dist/*

@@ -2,7 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pytest
 
-import teal_minimal as tm
+import plotform as tm
 
 
 def cycle_colors():
@@ -54,7 +54,9 @@ def test_scoped_theme_restores_previous_settings():
     assert mpl.rcParams["axes.titlesize"] == original
 
 
-@pytest.mark.parametrize("suffix,signature", [("png", b"\x89PNG"), ("pdf", b"%PDF"), ("svg", b"<?xml")])
+@pytest.mark.parametrize(
+    "suffix,signature", [("png", b"\x89PNG"), ("pdf", b"%PDF"), ("svg", b"<?xml")]
+)
 def test_export_formats(tmp_path, suffix, signature):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [1, 2])

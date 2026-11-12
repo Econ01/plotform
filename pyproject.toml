@@ -1,24 +1,48 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "teal-minimal"
-version = "0.5.0"
-description = "A minimalist teal Matplotlib theme with rounded helpers and bundled fonts."
+name = "plotform"
+version = "0.1.0"
+description = "A minimalist Matplotlib theme and plotting toolkit with customizable palettes, capsule-shaped chart elements, and bundled fonts."
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
-authors = [{name = "Teal Minimal contributors"}]
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Econ01"}]
+keywords = ["matplotlib", "plotting", "visualization", "theme", "capsule", "publication"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
 dependencies = [
     "matplotlib>=3.8",
     "numpy>=1.24",
 ]
 
+[project.urls]
+Homepage = "https://github.com/Econ01/plotform"
+Repository = "https://github.com/Econ01/plotform"
+Issues = "https://github.com/Econ01/plotform/issues"
+Changelog = "https://github.com/Econ01/plotform/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 dev = [
+    "build>=1.2",
     "fonttools>=4.50",
+    "pillow>=9",
     "pytest>=8",
+    "ruff>=0.6",
+    "tomli>=2; python_version < '3.11'",
 ]
 
 [tool.setuptools]
@@ -29,8 +53,16 @@ include-package-data = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-teal_minimal = ["assets/fonts/*.ttf", "assets/fonts/*.txt", "assets/fonts/*.md"]
+plotform = ["assets/fonts/*.ttf", "assets/fonts/*.txt", "assets/fonts/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]

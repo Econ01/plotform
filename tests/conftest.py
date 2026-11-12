@@ -4,7 +4,7 @@ matplotlib.use("Agg")
 
 import pytest
 
-import teal_minimal as tm
+import plotform as tm
 
 
 @pytest.fixture(autouse=True)

@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build backend
+        run: python -m pip install build
+      - name: Verify release version
+        run: python tools/check_version.py
+      - name: Build distributions
+        run: python -m build
+      - name: Verify source distribution
+        run: python tools/check_sdist.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plotform-distributions
+          path: dist/*
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event_name == 'release' && 'pypi' || 'testpypi' }}
+      url: ${{ github.event_name == 'release' && 'https://pypi.org/project/plotform/' || 'https://test.pypi.org/project/plotform/' }}
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: plotform-distributions
+          path: dist
+      - name: Publish to package index
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: ${{ github.event_name == 'release' && '' || 'https://test.pypi.org/legacy/' }}
+          skip-existing: true
+          verbose: true

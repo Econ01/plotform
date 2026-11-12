@@ -1,4 +1,4 @@
-"""Render Matplotlib-default versus Teal Minimal comparison charts.
+"""Render Matplotlib-default versus Plotform comparison charts.
 
 Final PNGs default to 800 DPI; contact-sheet previews stay lightweight.
 Usage:
@@ -23,7 +23,8 @@ import numpy as np
 from matplotlib import style
 from PIL import Image, ImageDraw, ImageFont
 
-import teal_minimal as tm
+import plotform as tm
+from plotform.fonts import font_paths
 
 Chart = Callable[[], plt.Figure]
 CHARTS: list[tuple[str, str, Chart]] = []
@@ -56,15 +57,22 @@ def colormap(kind: str = "sequential") -> str:
 
 def add_legend(ax, **kwargs):
     if using_theme():
-        return tm.pill_legend(ax, **kwargs)
-    for key in ("styles", "outside", "backdrop", "backdrop_alpha", "backdrop_color", "backdrop_pad"):
+        return tm.legend(ax, **kwargs)
+    for key in (
+        "styles",
+        "outside",
+        "backdrop",
+        "backdrop_alpha",
+        "backdrop_color",
+        "backdrop_pad",
+    ):
         kwargs.pop(key, None)
     return ax.legend(**kwargs)
 
 
 def add_colorbar(fig, ax, mappable, **kwargs):
     if using_theme():
-        return tm.capsule_colorbar(fig, ax, mappable, **kwargs)
+        return tm.colorbar(mappable, fig=fig, ax=ax, **kwargs)
     return fig.colorbar(mappable, ax=ax, **kwargs)
 
 
@@ -101,7 +109,9 @@ def time_series_chart():
     fig, ax = plt.subplots()
     ax.plot(dates, values[:, 0], label="Revenue")
     ax.plot(dates, values[:, 1], label="Cost")
-    add_legend(ax, )
+    add_legend(
+        ax,
+    )
     fig.autofmt_xdate(rotation=0)
     return finish(fig, ax, "Dates stay quiet and readable", ylabel="Index")
 
@@ -115,7 +125,9 @@ def scatter_chart():
         y = 0.7 * x + rng.normal(i * 0.5, 0.75, 65)
         size = rng.uniform(24, 170, x.size)
         ax.scatter(x, y, s=size, alpha=0.68, label=label)
-    add_legend(ax, )
+    add_legend(
+        ax,
+    )
     return finish(fig, ax, "Soft markers without heavy outlines", "Exposure", "Response")
 
 
@@ -153,7 +165,9 @@ def stacked_bar_chart():
     x = np.arange(4)
     bottom = np.zeros(4)
     fig, ax = plt.subplots()
-    for values, name in zip(((3, 4, 4, 5), (2, 3, 3, 3), (1, 1, 2, 2)), ("Core", "New", "Other")):
+    for values, name in zip(
+        ((3, 4, 4, 5), (2, 3, 3, 3), (1, 1, 2, 2)), ("Core", "New", "Other"), strict=True
+    ):
         ax.bar(x, values, bottom=bottom, width=0.58, label=name)
         bottom += values
     ax.set_xticks(x, labels)
@@ -167,8 +181,8 @@ def rounded_bar_chart():
     x = np.arange(5)
     values = np.array((3.0, 5.0, -2.0, 4.0, -3.0))
     if using_theme():
-        tm.rounded_bar(ax1, x - 0.18, values, width=0.32, radius="full", ends="free", label="Free end")
-        tm.rounded_bar(ax1, x + 0.18, values, width=0.32, radius="full", ends="both", label="Both ends")
+        tm.bar(x - 0.18, values, width=0.32, radius="full", ends="free", label="Free end", ax=ax1)
+        tm.bar(x + 0.18, values, width=0.32, radius="full", ends="both", label="Both ends", ax=ax1)
     else:
         ax1.bar(x - 0.18, values, width=0.32, label="Free end")
         ax1.bar(x + 0.18, values, width=0.32, label="Both ends")
@@ -180,7 +194,7 @@ def rounded_bar_chart():
 
     y = np.arange(4)
     if using_theme():
-        tm.rounded_barh(ax2, y, (5, 3, 4, 2), radius="full", color=palette(3)[2])
+        tm.barh(y, (5, 3, 4, 2), radius="full", color=palette(3)[2], ax=ax2)
     else:
         ax2.barh(y, (5, 3, 4, 2), color=palette(3)[2])
     ax2.set_yticks(y, ("Alpha", "Beta", "Gamma", "Delta"))
@@ -196,7 +210,9 @@ def histogram_chart():
     fig, ax = plt.subplots()
     for mean, label in ((0.0, "A"), (1.0, "B"), (2.0, "C")):
         ax.hist(rng.normal(mean, 0.8, 600), bins=28, alpha=0.55, label=label)
-    add_legend(ax, )
+    add_legend(
+        ax,
+    )
     return finish(fig, ax, "Overlapping distributions", "Value", "Frequency")
 
 
@@ -207,7 +223,7 @@ def boxplot_chart():
     fig, ax = plt.subplots()
     if using_theme():
         result = ax.boxplot(data, patch_artist=True)
-        for patch, color in zip(result["boxes"], palette(4)):
+        for patch, color in zip(result["boxes"], palette(4), strict=True):
             patch.set_facecolor(color)
             patch.set_alpha(0.30)
     else:
@@ -223,7 +239,7 @@ def violin_chart():
     fig, ax = plt.subplots()
     result = ax.violinplot(data, showmedians=True, showextrema=False)
     if using_theme():
-        for body, color in zip(result["bodies"], palette(4)):
+        for body, color in zip(result["bodies"], palette(4), strict=True):
             body.set_facecolor(color)
             body.set_edgecolor(color)
             body.set_alpha(0.42)
@@ -315,7 +331,9 @@ def log_chart():
     ax.semilogy(x, np.exp(x / 25), label="Exponential")
     ax.semilogy(x, x**2.2, label="Power law")
     ax.grid(True, which="major")
-    add_legend(ax, )
+    add_legend(
+        ax,
+    )
     return finish(fig, ax, "Major gridlines only on a log scale", "x", "Magnitude")
 
 
@@ -351,7 +369,9 @@ def streamplot_chart():
     xx, yy = np.meshgrid(x, y)
     speed = np.hypot(xx, yy)
     fig, ax = plt.subplots()
-    stream = ax.streamplot(xx, yy, -yy, xx, color=speed, cmap=colormap(), density=1.2, linewidth=1.2)
+    stream = ax.streamplot(
+        xx, yy, -yy, xx, color=speed, cmap=colormap(), density=1.2, linewidth=1.2
+    )
     add_colorbar(fig, ax, stream.lines, pad=0.02)
     return finish(fig, ax, "Flow intensity through the sequential map", "x", "y")
 
@@ -367,23 +387,37 @@ def pills_chart():
         "Peak",
         (x[peak], y[peak]),
         xytext=(x[peak] - 1.7, y[peak] + 0.6),
-        arrowprops={"arrowstyle": "-", "color": neutral(tm.MUTED), "connectionstyle": "arc3,rad=0.15"},
+        arrowprops={
+            "arrowstyle": "-",
+            "color": neutral(tm.MUTED),
+            "connectionstyle": "arc3,rad=0.15",
+        },
         color=neutral(tm.MUTED),
     )
     if using_theme():
-        tm.add_pill(ax, 0.20, 0.86, "ROND 100", transform=ax.transAxes)
-        tm.add_pill(ax, 0.20, 0.56, "Exact capsule", transform=ax.transAxes, facecolor=palette(2)[1])
+        tm.annotate("ROND 100", (0.20, 0.86), ax=ax, transform=ax.transAxes)
+        tm.annotate(
+            "Exact capsule", (0.20, 0.56), ax=ax, transform=ax.transAxes, facecolor=palette(2)[1]
+        )
     else:
-        for vertical, text, color in ((0.86, "Default box", palette(1)[0]), (0.56, "Rounded corners", palette(2)[1])):
+        for vertical, text, color in (
+            (0.86, "Default box", palette(1)[0]),
+            (0.56, "Rounded corners", palette(2)[1]),
+        ):
             ax.text(
-                0.20, vertical, text, transform=ax.transAxes,
-                ha="center", va="center", color="white",
+                0.20,
+                vertical,
+                text,
+                transform=ax.transAxes,
+                ha="center",
+                va="center",
+                color="white",
                 bbox={"boxstyle": "round,pad=0.55", "facecolor": color, "edgecolor": "none"},
             )
     ax.text(
         0.98,
         0.06,
-        "font = 'Teal Minimal Mono'" if using_theme() else "font = 'DejaVu Sans Mono'",
+        "font = 'Plotform Mono'" if using_theme() else "font = 'DejaVu Sans Mono'",
         transform=ax.transAxes,
         ha="right",
         family=tm.MONO_FONT if using_theme() else "monospace",
@@ -417,9 +451,13 @@ def palette_chart():
     for i, color in enumerate(colors):
         ax.hlines(i, 0, 1, color=color, linewidth=8)
         ax.text(
-            1.04, i, color, va="center",
+            1.04,
+            i,
+            color,
+            va="center",
             family=tm.MONO_FONT if using_theme() else "monospace",
-            fontsize=9, color=neutral(tm.MUTED),
+            fontsize=9,
+            color=neutral(tm.MUTED),
         )
     ax.set_xlim(0, 1.35)
     ax.set_ylim(-1, len(colors))
@@ -457,7 +495,16 @@ def three_d_scatter_chart():
     ax = fig.add_subplot(projection="3d")
     if using_theme():
         tm.style_3d(ax)
-    points = ax.scatter(radius * np.cos(angle), radius * np.sin(angle), z, c=z, s=22, alpha=1.0, cmap=colormap(), depthshade=False)
+    points = ax.scatter(
+        radius * np.cos(angle),
+        radius * np.sin(angle),
+        z,
+        c=z,
+        s=22,
+        alpha=1.0,
+        cmap=colormap(),
+        depthshade=False,
+    )
     ax.set_title("3D scatter with sequential depth", pad=14)
     add_colorbar(fig, ax, points, shrink=0.65, pad=0.08)
     return fig
@@ -473,7 +520,9 @@ def three_d_surface_chart():
     ax = fig.add_subplot(projection="3d")
     if using_theme():
         tm.style_3d(ax, elev=30)
-    surface = ax.plot_surface(xx, yy, zz, cmap=colormap("diverging"), linewidth=0, antialiased=False, rcount=60, ccount=60)
+    surface = ax.plot_surface(
+        xx, yy, zz, cmap=colormap("diverging"), linewidth=0, antialiased=False, rcount=60, ccount=60
+    )
     ax.set_title("A surface without heavy panes", pad=14)
     add_colorbar(fig, ax, surface, shrink=0.65, pad=0.08)
     return fig
@@ -529,25 +578,27 @@ def make_contact_sheet(records, output: Path):
 
     row_heights = []
     for start in range(0, len(thumbnails), columns):
-        row = thumbnails[start:start + columns]
+        row = thumbnails[start : start + columns]
         row_heights.append(max(image.height for _, image in row) + title_height + gap)
     width = 2 * margin + columns * cell_width + (columns - 1) * gap
     height = header + sum(row_heights) + margin
     sheet = Image.new("RGB", (width, height), "white")
     draw = ImageDraw.Draw(sheet)
-    font_path = str(tm.font_paths()[tm.SANS_FONT])
+    font_path = str(font_paths()[tm.SANS_FONT])
     header_font = ImageFont.truetype(font_path, 42)
     title_font = ImageFont.truetype(font_path, 24)
-    draw.text((margin, 22), "Default vs Teal Minimal · visual showcase", font=header_font, fill=tm.INK)
+    draw.text((margin, 22), "Default vs Plotform · visual showcase", font=header_font, fill=tm.INK)
 
     y = header
     for row_index, start in enumerate(range(0, len(thumbnails), columns)):
-        row = thumbnails[start:start + columns]
+        row = thumbnails[start : start + columns]
         for column, (title, image) in enumerate(row):
             x = margin + column * (cell_width + gap)
             bounds = draw.textbbox((0, 0), title, font=title_font)
             text_width = bounds[2] - bounds[0]
-            draw.text((x + (cell_width - text_width) / 2, y + 4), title, font=title_font, fill=tm.INK)
+            draw.text(
+                (x + (cell_width - text_width) / 2, y + 4), title, font=title_font, fill=tm.INK
+            )
             sheet.paste(image, (x + (cell_width - image.width) // 2, y + title_height))
         y += row_heights[row_index]
     sheet.save(output, dpi=(130, 130))
@@ -582,10 +633,8 @@ def compose_comparison(default_image, themed_image, dpi: int):
     comparison.paste(themed_image, (width + gap, header))
 
     draw = ImageDraw.Draw(comparison)
-    font = ImageFont.truetype(
-        str(tm.font_paths()[tm.SANS_FONT]), size=round(14 * dpi / 72)
-    )
-    for center, label in ((width / 2, "Matplotlib default"), (width + gap + width / 2, "Teal Minimal")):
+    font = ImageFont.truetype(str(font_paths()[tm.SANS_FONT]), size=round(14 * dpi / 72))
+    for center, label in ((width / 2, "Matplotlib default"), (width + gap + width / 2, "Plotform")):
         bounds = draw.textbbox((0, 0), label, font=font)
         text_width = bounds[2] - bounds[0]
         text_height = bounds[3] - bounds[1]
@@ -602,7 +651,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=Path("artifacts/showcase"))
     parser.add_argument("--dpi", type=int, default=800, help="Final comparison PNG resolution")
-    parser.add_argument("--preview-width", type=int, default=1800, help="Contact-sheet preview width in pixels")
+    parser.add_argument(
+        "--preview-width", type=int, default=1800, help="Contact-sheet preview width in pixels"
+    )
     parser.add_argument("--only", nargs="+", help="Optional chart slugs to render")
     args = parser.parse_args()
     if args.dpi < 1 or args.preview_width < 100:

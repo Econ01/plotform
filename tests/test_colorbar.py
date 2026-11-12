@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
-from matplotlib.path import Path
 import numpy as np
 import pytest
+from matplotlib.path import Path
 
-import teal_minimal as tm
+import plotform as tm
 
 
 def test_capsule_colorbar_clips_gradient_and_keeps_ticks_outside():
     fig, ax = plt.subplots(figsize=(6, 4), dpi=100)
     image = ax.imshow(np.arange(25).reshape(5, 5), cmap=tm.SCALAR_CMAP)
-    colorbar = tm.capsule_colorbar(fig, ax, image, pad=0.05)
+    colorbar = tm.colorbar(image, ax=ax, pad=0.05)
     fig.canvas.draw()
     cax = colorbar.ax
     clip = colorbar.capsule_patch
@@ -42,7 +42,7 @@ def test_capsule_colorbar_supports_contour_mappables():
     fig, ax = plt.subplots()
     values = np.linspace(-1, 1, 100).reshape(10, 10)
     contour = ax.contourf(values, cmap=tm.DIVERGING_CMAP)
-    colorbar = tm.capsule_colorbar(fig, ax, contour)
+    colorbar = tm.colorbar(contour, ax=ax)
     fig.canvas.draw()
     assert colorbar.solids.get_clip_path()._patch is colorbar.capsule_patch
     plt.close(fig)
@@ -52,5 +52,5 @@ def test_horizontal_capsule_colorbar_is_rejected():
     fig, ax = plt.subplots()
     image = ax.imshow(np.arange(9).reshape(3, 3))
     with pytest.raises(ValueError):
-        tm.capsule_colorbar(fig, ax, image, orientation="horizontal")
+        tm.colorbar(image, ax=ax, orientation="horizontal")
     plt.close(fig)

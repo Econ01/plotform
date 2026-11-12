@@ -15,7 +15,7 @@ from fontTools.ttLib import TTFont
 from fontTools.varLib.instancer import instantiateVariableFont
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "src" / "teal_minimal" / "assets" / "fonts"
+OUTPUT = ROOT / "src" / "plotform" / "assets" / "fonts"
 BASE_URL = "https://raw.githubusercontent.com/google/fonts/main/ofl"
 
 SOURCES = {
@@ -23,17 +23,17 @@ SOURCES = {
         "url": f"{BASE_URL}/googlesansflex/GoogleSansFlex%5BROND%2Copsz%2Cslnt%2Cwdth%2Cwght%5D.ttf",
         "license": f"{BASE_URL}/googlesansflex/OFL.txt",
         "trademarks": f"{BASE_URL}/googlesansflex/TRADEMARKS.md",
-        "output": "TealMinimalSans-Rounded.ttf",
-        "family": "Teal Minimal Sans",
-        "postscript": "TealMinimalSans-Rounded",
+        "output": "PlotformSans-Rounded.ttf",
+        "family": "Plotform Sans",
+        "postscript": "PlotformSans-Rounded",
     },
     "mono": {
         "url": f"{BASE_URL}/googlesanscode/GoogleSansCode%5Bwght%5D.ttf",
         "license": f"{BASE_URL}/googlesanscode/OFL.txt",
         "trademarks": f"{BASE_URL}/googlesanscode/TRADEMARKS.md",
-        "output": "TealMinimalMono-Regular.ttf",
-        "family": "Teal Minimal Mono",
-        "postscript": "TealMinimalMono-Regular",
+        "output": "PlotformMono-Regular.ttf",
+        "family": "Plotform Mono",
+        "postscript": "PlotformMono-Regular",
     },
 }
 

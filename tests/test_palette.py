@@ -1,10 +1,10 @@
 import matplotlib as mpl
-from matplotlib.colors import is_color_like
 import pytest
+from matplotlib.colors import is_color_like
 
-import teal_minimal as tm
-from teal_minimal.palette import register_colormaps
-from teal_minimal.legend_utils import _contrast_ratio
+import plotform as tm
+from plotform.legend_utils import _contrast_ratio
+from plotform.palette import register_colormaps
 
 
 def test_curated_palette_order():
