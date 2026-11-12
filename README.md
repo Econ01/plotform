@@ -9,6 +9,8 @@
 
 Plotform combines a vivid, minimalist visual style with native-style helpers for pill legends, circularly rounded bars, capsule annotations, vertical capsule colorbars, and clean 3D plots. Fonts are bundled, so system font installation is not required.
 
+[![Plotform examples showing a line chart, rounded bars, a heatmap, and a 3D scatter plot](https://raw.githubusercontent.com/Econ01/plotform/main/docs/images/overview.png)](https://github.com/Econ01/plotform/tree/main/examples)
+
 ## Requirements
 
 - Python 3.10 or newer
@@ -180,6 +182,8 @@ tm.annotate("New", (0.15, 0.85), ax=ax, transform=ax.transAxes)
 
 `plotform.rounded` also exposes `capsule_path`, `CapsuleBox`, and separate squircle primitives for advanced use.
 
+[![Exact horizontal and vertical capsule geometry](https://raw.githubusercontent.com/Econ01/plotform/main/docs/images/capsules.png)](https://github.com/Econ01/plotform/blob/main/examples/geometry_check.py)
+
 ## Capsule colorbars
 
 ```python
@@ -208,6 +212,8 @@ python examples/geometry_check.py
 ```
 
 The showcase creates 27 default-versus-Plotform comparisons at 800 DPI, lightweight previews, selected PDF/SVG exports, and a contact sheet under `artifacts/showcase/`. The geometry script creates exact capsule reference boards under `artifacts/`.
+
+[View the complete 27-chart contact sheet](https://github.com/Econ01/plotform/blob/main/docs/images/contact-sheet.png) or regenerate the documentation images with `python tools/make_doc_images.py`.
 
 ## Development
 

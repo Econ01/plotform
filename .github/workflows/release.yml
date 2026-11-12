@@ -12,8 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install build backend
@@ -24,7 +24,7 @@ jobs:
         run: python -m build
       - name: Verify source distribution
         run: python tools/check_sdist.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: plotform-distributions
           path: dist/*
@@ -38,7 +38,7 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: plotform-distributions
           path: dist
