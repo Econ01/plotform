@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teal-minimal"
+version = "0.5.0"
+description = "A minimalist teal Matplotlib theme with rounded helpers and bundled fonts."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Teal Minimal contributors"}]
+dependencies = [
+    "matplotlib>=3.8",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "fonttools>=4.50",
+    "pytest>=8",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+teal_minimal = ["assets/fonts/*.ttf", "assets/fonts/*.txt", "assets/fonts/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
